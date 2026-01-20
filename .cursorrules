@@ -1,0 +1,67 @@
+# RRSP Stock Screener
+
+## Project Overview
+An interactive Streamlit web app that screens 400+ US and Canadian stocks based on user-selected criteria (investing style, sectors, risk tolerance) and ranks them by upside potential using live data from Yahoo Finance.
+
+## Tech Stack
+- **Frontend**: Streamlit (Python web framework)
+- **Data Source**: yfinance (Yahoo Finance API wrapper)
+- **Data Processing**: pandas
+- **Markets**: S&P 500 (~300 tickers) + TSX 60 (~70 tickers) + Canadian ETFs
+
+## Project Structure
+```
+jan20_investing/
+├── app.py              # Main Streamlit UI and user interaction
+├── screener.py         # Core screening logic (fetch, filter, score, rank)
+├── data/
+│   ├── sp500.py        # US stock tickers + sector mappings
+│   └── tsx60.py        # Canadian stock tickers + sector mappings
+├── requirements.txt    # Python dependencies
+└── README.md           # User documentation
+```
+
+## Key Features
+1. **Market Selection**: US only, Canadian only, or both
+2. **Investing Styles**: Growth, Value, Dividend, Blend (each with different scoring weights)
+3. **Sector Filtering**: 11 sectors to include/exclude
+4. **Risk Tolerance**: Large cap, mid cap, small cap filtering
+5. **Analyst Filters**: Min coverage, min upside %, buy ratings only
+6. **Results**: Ranked table with scores, expandable details, CSV download
+
+## Scoring Algorithm
+Each stock gets a composite score (0-100) based on investing style:
+
+| Factor | Growth | Value | Dividend | Blend |
+|--------|--------|-------|----------|-------|
+| Upside to Target | 25% | 40% | 15% | 25% |
+| Analyst Rating | 20% | 20% | 15% | 20% |
+| Revenue Growth | 35% | 5% | 5% | 15% |
+| Earnings Growth | 15% | 5% | 5% | 10% |
+| Dividend Yield | 0% | 10% | 40% | 15% |
+| Value (P/E) | 5% | 20% | 20% | 15% |
+
+## How to Run
+```bash
+python3 -m streamlit run app.py
+```
+Opens at http://localhost:8501
+
+## Code Conventions
+- **Streamlit UI**: All in `app.py`, sidebar for filters, main area for results
+- **Screening Logic**: Separated in `screener.py` for modularity
+- **Data Fetching**: Parallel fetching with ThreadPoolExecutor (10 workers)
+- **Error Handling**: Graceful failures for missing data, empty results
+
+## Important Notes
+- yfinance data may be delayed 15-20 minutes
+- ETFs don't have analyst ratings (marked as "ETF" sector)
+- Screening 400+ stocks takes 1-2 minutes
+- Some stocks may have incomplete data (handled gracefully)
+
+## Future Enhancement Ideas
+- Save watchlists to file
+- Email alerts for new matches
+- Add technical indicators (RSI, moving averages)
+- Historical tracking of screener results
+- Deploy to Streamlit Cloud for web access
