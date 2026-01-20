@@ -1,6 +1,6 @@
 """
-RRSP Stock Screener
-An interactive tool to find investment candidates based on your criteria.
+InvestScout
+Discover high-potential investment candidates for your RRSP.
 """
 
 import streamlit as st
@@ -17,8 +17,8 @@ from data.tsx60 import TSX_TICKERS, TSX_SECTOR_MAP
 
 # Page configuration
 st.set_page_config(
-    page_title="RRSP Stock Screener",
-    page_icon="📈",
+    page_title="InvestScout - RRSP Stock Screener",
+    page_icon="🔍",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -64,8 +64,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Header
-st.markdown('<p class="main-header">📈 RRSP Stock Screener</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Find investment candidates based on your criteria</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-header">🔍 InvestScout</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Discover high-potential investment candidates for your RRSP</p>', unsafe_allow_html=True)
 
 # Sidebar with filters
 with st.sidebar:
@@ -406,13 +406,112 @@ else:
         st.write("• Diversified")
         st.write("• Lower risk")
 
+# How It Works Section
+st.markdown("---")
+st.markdown("## 🔬 How InvestScout Works")
+
+with st.expander("📊 Data Collection & Screening Process", expanded=False):
+    st.markdown("""
+    ### 1. Stock Universe
+    InvestScout screens a curated universe of **400+ liquid stocks**:
+    - **~300 US stocks** from the S&P 500
+    - **~70 Canadian stocks** from the TSX 60 + popular ETFs
+    
+    ### 2. Live Data Fetching
+    For each stock, we fetch real-time data from Yahoo Finance:
+    - Current price & analyst target price
+    - Analyst recommendations (Buy/Hold/Sell)
+    - Financial metrics (P/E ratio, revenue growth, earnings growth)
+    - Dividend information (yield, payout ratio)
+    - Market cap and sector classification
+    
+    ### 3. Filter Application
+    Stocks are filtered based on your criteria:
+    - **Sector**: Only include selected sectors
+    - **Market Cap**: Filter by company size (large/mid/small cap)
+    - **Analyst Coverage**: Minimum number of analysts covering the stock
+    - **Upside Potential**: Minimum % difference between current price and target
+    - **Ratings**: Optionally show only Buy/Strong Buy recommendations
+    """)
+
+with st.expander("🎯 Scoring & Ranking Algorithm", expanded=False):
+    st.markdown("""
+    ### Composite Score Calculation
+    Each stock receives a score from **0-100** based on your selected investing style.
+    
+    Different styles weight factors differently:
+    """)
+    
+    scoring_df = pd.DataFrame({
+        'Factor': ['Upside to Target', 'Analyst Rating', 'Revenue Growth', 'Earnings Growth', 'Dividend Yield', 'Value (P/E)'],
+        'Growth': ['25%', '20%', '35%', '15%', '0%', '5%'],
+        'Value': ['40%', '20%', '5%', '5%', '10%', '20%'],
+        'Dividend': ['15%', '15%', '5%', '5%', '40%', '20%'],
+        'Blend': ['25%', '20%', '15%', '10%', '15%', '15%'],
+    })
+    
+    st.dataframe(scoring_df, use_container_width=True, hide_index=True)
+    
+    st.markdown("""
+    ### How Each Factor is Scored:
+    - **Upside to Target**: Higher upside = higher score (capped at 50% upside = 100 points)
+    - **Analyst Rating**: Strong Buy = 100, Buy = 75, Hold = 50, Sell = 0
+    - **Revenue/Earnings Growth**: Higher growth = higher score (50% growth = 100 points)
+    - **Dividend Yield**: Higher yield = higher score (5% yield = 100 points)
+    - **Value (P/E)**: Lower P/E = higher score (P/E of 10 = 100 points)
+    
+    The final score is a weighted average of these factors based on your style.
+    """)
+
+with st.expander("⚠️ Limitations & Disclaimers", expanded=False):
+    st.markdown("""
+    ### Data Limitations
+    - **Delayed Prices**: Yahoo Finance data may be delayed 15-20 minutes during market hours
+    - **Analyst Coverage**: Not all stocks have analyst coverage (especially smaller caps)
+    - **ETFs**: Exchange-traded funds don't have analyst ratings or target prices
+    - **Missing Data**: Some stocks may have incomplete financial data
+    
+    ### Important Notes
+    - This tool is for **informational purposes only** and is not financial advice
+    - Past performance does not guarantee future results
+    - Always do your own research before making investment decisions
+    - Consider consulting a licensed financial advisor for personalized advice
+    - Screening takes 1-2 minutes to fetch data for 400+ stocks
+    """)
+
+with st.expander("💡 Tips for Best Results", expanded=False):
+    st.markdown("""
+    ### Getting the Most from InvestScout
+    
+    **For Growth Investors:**
+    - Focus on Technology, Healthcare, and Consumer Discretionary sectors
+    - Include mid-cap stocks for higher growth potential
+    - Set minimum upside to 20%+ to find momentum plays
+    
+    **For Value Investors:**
+    - Look across all sectors for hidden gems
+    - Enable "Buy ratings only" to find analyst-backed opportunities
+    - Consider stocks near 52-week lows (shown in Signal column)
+    
+    **For Dividend Investors:**
+    - Focus on Financials, Utilities, and Consumer Staples
+    - Large cap only for stability
+    - Check payout ratio in detailed view to ensure sustainability
+    
+    **General Tips:**
+    - Run multiple screens with different criteria to compare results
+    - Click on stocks in the detailed view to see full metrics
+    - Download results as CSV to track over time
+    - Re-run monthly to find new opportunities as market conditions change
+    """)
+
 # Footer
 st.markdown("---")
 st.markdown(
     """
     <div style="text-align: center; color: #6b7280; font-size: 0.9rem;">
-        📊 Data provided by Yahoo Finance via yfinance. Prices may be delayed 15-20 minutes.<br>
-        ⚠️ This tool is for informational purposes only and is not financial advice.
+        Built with ❤️ for RRSP investors | Data: Yahoo Finance via yfinance<br>
+        ⚠️ Not financial advice. Always do your own research.
     </div>
     """,
     unsafe_allow_html=True
