@@ -179,16 +179,16 @@ with st.sidebar:
         value=20,
         help="How many top candidates to show"
     )
-
-# Main content area
-col1, col2 = st.columns([3, 1])
-
-with col2:
+    
+    st.markdown("---")
+    
     screen_button = st.button(
         "🔍 Find Candidates",
         type="primary",
         use_container_width=True,
     )
+
+
 
 # Build the screening criteria
 criteria = {
